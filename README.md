@@ -1,1 +1,1 @@
-# sw_chat_system
+# SW 채팅 실습 레포지토리
