@@ -1,0 +1,5 @@
+ function changeBackgroundColor() {
+    const colors = ['#F5A9F2', '#F7D358', '#F5A9A9', '#CEECF5','#D8D8D8','#BCF5A9','#BCA9F5','#8181F7']; // 변경할 배경색 목록
+    const randomColor = colors[Math.floor(Math.random() * colors.length)]; // 랜덤으로 색 선택
+            document.body.style.backgroundColor = randomColor; // 배경색 변경
+}
