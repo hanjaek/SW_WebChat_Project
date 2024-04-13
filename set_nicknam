@@ -1,0 +1,43 @@
+let nickname = '익명'; // 닉네임 변수 초기값 익명으로
+
+    setNicknameButton.addEventListener('click', () => {
+        nickname = nicknameInput.value.trim();
+        nicknameInput.value = ''; // 입력창 비우기
+    });
+
+const data = nickname + ": " + message; // 닉네임과 메시지를 결합하여 전송
+
+   <input type="text" id="nicknameInput" placeholder="닉네임을 설정하세요...">
+    <button id="setNicknameButton">닉네임 설정</button>'
+-----------------------------------
+/*
+const WebSocket = require('ws');
+
+const wss = new WebSocket.Server({ port: 8080 });
+
+wss.on('connection', function connection(ws) {
+    let nickname = '';
+
+    ws.on('message', function incoming(message) {
+        const data = JSON.parse(message);
+        if (data.type === 'nickname') {
+            nickname = data.nickname;
+            wss.clients.forEach(function each(client) {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(nickname + ' has joined the chat.');
+                }
+            });
+        } else if (data.type === 'message') {
+            wss.clients.forEach(function each(client) {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({ type: 'message', nickname: nickname, message: data.message }));
+                }
+            });
+        }
+    });
+
+    ws.send('Welcome to the chat server!');
+});
+
+console.log('Chat server is running on ws://localhost:8080');
+*/
