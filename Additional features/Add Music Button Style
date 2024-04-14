@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<title>Chat App</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: beige; /* 초기 배경색 지정 */
+    }
+    .chat-title {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        font-size: 20px;
+        z-index: 999; /* 타이틀이 상위에 표시되도록 z-index 설정 */
+        margin-bottom: 10px; /* 입력창과 겹치지 않도록 여백 추가 */
+    }
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 110px); /* 타이틀 높이와 닉네임 입력란 높이만큼 뺌 */
+        padding-top: 135px; /* 타이틀 높이와 닉네임 입력란 높이만큼 여백 추가 */
+    }
+    .chat-messages {
+        flex: 1;
+        overflow-y: scroll;
+        padding: 10px;
+    }
+    .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .my-message {
+        align-self: flex-end;
+        background-color: #DCF8C6;
+    }
+    .other-message {
+        align-self: flex-start;
+        background-color: #EAEAEA;
+    }
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        background-color: #f0f0f0;
+        margin-bottom: 10px; /* 입력창과 배경 변경 버튼 간 여백 추가 */
+    }
+    #messageInput {
+        flex: 1;
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-right: 10px;
+    }
+    #sendButton {
+        padding: 8px 15px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+    }
+    #nicknameInput {
+        padding: 8px;
+        font-size: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-right: 10px;
+        position: fixed;
+        top: 51px;
+        right: 125px;
+    }
+    #setNicknameButton {
+        padding: 8px 15px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        position: fixed;
+        top: 50px;
+        right: 10px;
+    }
+    #bgButton {
+        padding: 8px 15px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        position: fixed;
+        top: 95px; /* 수정: 배경 변경 버튼을 아래로 이동 */
+        right: 10px; /* 배경 변경 버튼을 좌측으로 이동 */
+    }
+    #playButton {
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    position: fixed;
+    top: 50px; /* 재생 버튼을 배경 변경 버튼 아래에 배치 */
+    right: 1443px; /* 재생 버튼을 우측에 배치 */
+    }
+
+    /* 일시정지 버튼 스타일 */
+    #pauseButton {
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    position: fixed;
+    top: 50px; /* 일시정지 버튼을 재생 버튼 아래에 배치 */
+    right: 1370px; /* 일시정지 버튼을 우측에 배치 */
+    }
+
+    /* 음소거 버튼 스타일 */
+    #muteButton {
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    position: fixed;
+    top: 50px; /* 음소거 버튼을 일시정지 버튼 아래에 배치 */
+    right: 1312px; /* 음소거 버튼을 우측에 배치 */
+    }
+    .selectButton {
+    border: 1px solid #ccc;
+    cursor: pointer;
+    position: fixed;
+    top: 52px;
+    right: 1490px;
+    }
+</style>
+</head>
+<body>
+<div class="chat-title">CHAT</div>
+<div class="chat-container">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="메시지를 입력하세요...">
+        <button id="sendButton" onclick="sendMessage()">전송</button>
+    </div>
+</div>
+<div>
+    <input type="text" id="nicknameInput" placeholder="닉네임을 설정하세요...">
+    <button id="setNicknameButton">닉네임 설정</button>
+    <button id="bgButton">배경 변경</button>
+    <select class="selectButton" id="audioSelect">
+        <option value="멜로망스_인사.mp3">멜로망스 - 인사</option>
+        <option value="잔나비_외딴섬로맨틱.mp3">잔나비 - 외딴섬로맨틱</option>
+        <option value="숀_Easy.mp3">숀 - Easy</option>
+        <option value="숀_Way Back Home.mp3">숀 - Way Back Home</option>
+        <option value="첸,펀치_Everytime.mp3">첸,펀치 - Everytime</option>
+        <option value="폴킴_New Day.mp3">폴킴 - New Day</option>
+        <option value="폴킴_화이트.mp3">폴킴 - 화이트</option>
+    </select>
+
+    <button id = "playButton" onclick="playSelectedAudio()">재생</button>
+    <button id = "pauseButton" onclick="pauseAudio()">일시정지</button>
+    <button id = "muteButton" onclick="muteAudio()">음소거</button>
+</div>
+
+<script>
+
+    const ws = new WebSocket('ws://localhost:8080');
+    const chat = document.getElementById('chat'); // document: 현재 html
+    const chatMessages = document.getElementById('chatMessages');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const nicknameInput = document.getElementById('nicknameInput');
+    const setNicknameButton = document.getElementById('setNicknameButton');
+    const bgButton = document.getElementById('bgButton');
+
+    ws.onmessage = function(event) {
+    if (event.data instanceof Blob) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            appendMessage(reader.result, 'other-message'); // 상대방의 메시지로 표시
+        };
+        reader.readAsText(event.data);
+    } else {
+        appendMessage(event.data, 'my-message'); // 내 채팅 메시지로 표시
+    }
+};
+
+
+    let nickname = '익명'; // 닉네임 변수 초기값 익명으로
+
+    // 메시지 전송 함수
+    function sendMessage() {
+        const message = messageInput.value;
+        if (message.trim() === '') return; // 빈 메시지 전송 방지
+        const data = nickname + ": " + message; // 닉네임과 메시지를 결합하여 전송
+        ws.send(data); // 데이터 전송
+        messageInput.value = ''; // 입력창 비우기
+    }
+
+    // 채팅창에 메시지 추가 함수
+    function appendMessage(message, messageType) {
+    const messageElement = document.createElement('div');
+    messageElement.textContent = message;
+    messageElement.classList.add('message', messageType);
+
+    // 메시지가 보내진 시간을 생성
+    const timeElement = document.createElement('span');
+    timeElement.textContent = getTime(); // getTime() 함수를 호출하여 현재 시간을 가져옴
+    timeElement.classList.add('message-time');
+    
+    // 메시지와 시간을 함께 추가
+    timeElement.style.float = 'right';
+    messageElement.appendChild(timeElement);
+
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // 자동 스크롤
+}
+
+// 현재 시간을 가져오는 함수
+    function getTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
+    function playSelectedAudio() {
+        const selectedAudio = document.getElementById('audioSelect').value;
+        if (currentAudio !== null) {
+            currentAudio.pause();
+        }
+        currentAudio = new Audio(selectedAudio);
+        currentAudio.play();
+    }
+
+    function pauseAudio() {
+        if (currentAudio !== null) {
+            if (!currentAudio.paused) {
+                currentAudio.pause();
+            } else {
+                currentAudio.play();
+            }
+        }
+    }
+
+    function muteAudio() {
+        if (currentAudio !== null) {
+            currentAudio.muted = !currentAudio.muted;
+        }
+    }
+
+    // 전송 버튼 클릭 이벤트
+    sendButton.addEventListener('click', () => {
+        sendMessage();
+    });
+
+    // 엔터 키 이벤트
+    messageInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    // 닉네임 설정 버튼 클릭 이벤트
+    setNicknameButton.addEventListener('click', () => {
+        nickname = nicknameInput.value.trim();
+        nicknameInput.value = ''; // 입력창 비우기
+    });
+
+    // 배경색 변경 함수
+    function changeBackgroundColor() {
+        const colors = ['#F5A9F2', '#F7D358', '#F5A9A9', '#CEECF5','#D8D8D8','#BCF5A9','#BCA9F5','#8181F7']; // 변경할 배경색 목록
+        const randomColor = colors[Math.floor(Math.random() * colors.length)]; // 랜덤으로 색 선택
+        document.body.style.backgroundColor = randomColor; // 배경색 변경
+    }
+
+    // 배경색 변경 버튼 클릭 이벤트
+    bgButton.addEventListener('click', () => {
+        changeBackgroundColor();
+    }
+    
+    );
+</script>
+</body>
+</html>
