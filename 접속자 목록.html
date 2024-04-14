@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Chat App</title>
+</head>
+<body>
+    <div>닉네임: <input type="text" id="nicknameInput" placeholder="Enter your nickname"></div>
+    <div id="chat"></div>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+    <div id="users">접속자 목록: </div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+        const chat = document.getElementById('chat');
+        const usersDiv = document.getElementById('users');
+        const messageInput = document.getElementById('messageInput');
+        const nicknameInput = document.getElementById('nicknameInput');
+
+        ws.onopen = function() {
+            sendNickname();
+        };
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'message') {
+                const message = document.createElement('p');
+                message.textContent = data.message;
+                chat.appendChild(message);
+            } else if (data.type === 'usersList') {
+                usersDiv.textContent = '접속자 목록: ' + data.users.join(', ');
+            }
+        };
+
+        function sendMessage() {
+            const message = messageInput.value;
+            ws.send(JSON.stringify({ type: 'message', message }));
+            messageInput.value = '';
+        }
+
+        function sendNickname() {
+            const nickname = nicknameInput.value;
+            ws.send(JSON.stringify({ type: 'nickname', nickname }));
+            nicknameInput.value = '익명';
+        }
+
+        nicknameInput.addEventListener('change', sendNickname);
+    </script>
+</body>
+</html>
