@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App</title>
+</head>
+<body>
+    <div id="chat"></div>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <select id="audioSelect">
+        <option value="멜로망스_인사.mp3">멜로망스 - 인사</option>
+        <option value="잔나비_외딴섬로맨틱.mp3">잔나비 - 외딴섬로맨틱</option>
+        <option value="숀_Easy.mp3">숀 - Easy</option>
+        <option value="숀_Way Back Home.mp3">숀 - Way Back Home</option>
+        <option value="첸,펀치_Everytime.mp3">첸,펀치 - Everytime</option>
+        <option value="폴킴_New Day.mp3">폴킴 - New Day</option>
+        <option value="폴킴_화이트.mp3">폴킴 - 화이트</option>
+    </select>
+
+    <button onclick="playSelectedAudio()">재생</button>
+    <button onclick="pauseAudio()">일시정지</button>
+    <button onclick="muteAudio()">음소거</button>
+
+    <script>
+        const ws = new WebSocket('ws://172.30.1.86:8080');
+        const chat = document.getElementById('chat');
+        const messageInput = document.getElementById('messageInput');
+        let currentAudio = null; // 현재 선택된 오디오
+
+        ws.onmessage = function(event) {
+            // event.data가 Blob 인스턴스일 경우 FileReader를 사용해서 읽어오기
+            if (event.data instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const message = document.createElement('p');
+                    message.textContent = reader.result;
+                    chat.appendChild(message);
+                };
+                reader.readAsText(event.data);
+            } else {
+                // 메시지가 문자열인 경우, 직접 표시
+                const message = document.createElement('p');
+                message.textContent = event.data;
+                chat.appendChild(message);
+            }
+        };
+
+        function sendMessage() {
+            const message = messageInput.value;
+            ws.send(message);
+            messageInput.value = '';
+        }
+
+        function playSelectedAudio() {
+            const selectedAudio = document.getElementById('audioSelect').value;
+            if (currentAudio !== null) {
+                currentAudio.pause();
+            }
+            currentAudio = new Audio(selectedAudio);
+            currentAudio.play();
+        }
+
+        function pauseAudio() {
+            if (currentAudio !== null) {
+                if (!currentAudio.paused) {
+                    currentAudio.pause();
+                } else {
+                    currentAudio.play();
+                }
+            }
+        }
+
+        function muteAudio() {
+            if (currentAudio !== null) {
+                currentAudio.muted = !currentAudio.muted;
+            }
+        }
+    </script>
+</body>
+</html>
