@@ -1,0 +1,47 @@
+   .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 110px); /* 타이틀 높이와 닉네임 입력란 높이만큼 뺌 */
+        padding-top: 135px; /* 타이틀 높이와 닉네임 입력란 높이만큼 여백 추가 */
+    }
+    .chat-title {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        font-size: 20px;
+        z-index: 999; /* 타이틀이 상위에 표시되도록 z-index 설정 */
+        margin-bottom: 10px; /* 입력창과 겹치지 않도록 여백 추가 */
+    }
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        background-color: #f0f0f0;
+        margin-bottom: 10px; /* 입력창과 배경 변경 버튼 간 여백 추가 */
+    }
+    .chat-messages {
+        flex: 1;
+        overflow-y: scroll;
+        padding: 10px;
+    }
+   #messageInput {
+        flex: 1;
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-right: 10px;
+    }
+
+<div class="chat-title">CHAT</div>
+<div class="chat-container">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="메시지를 입력하세요...">
+        <button onclick="sendMessage()">전송</button>
+    </div>
+</div>
