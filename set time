@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App</title>
+</head>
+<body>
+    <div id="chat"></div>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+        const chat = document.getElementById('chat'); // document: 현재 html
+        const messageInput = document.getElementById('messageInput');
+
+        ws.onmessage = function(event) {
+            // event.data가 Blob 인스턴스일 경우 FileReader를 사용해서 읽어오기
+            if (event.data instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const message = document.createElement('p');
+                    message.textContent = reader.result;
+                    chat.appendChild(message); // 메시지 붙이기
+                };
+                reader.readAsText(event.data);
+            } else {
+                // 메시지가 문자열인 경우, 직접 표시
+                const message = document.createElement('p');
+                message.textContent = event.data;
+                chat.appendChild(message);
+            }
+        };
+   // 메시지가 보내진 시간을 생성
+        const timeElement = document.createElement('span');
+     timeElement.textContent = getTime(); // getTime() 함수를 호출하여 현재 시간을 가져옴
+        timeElement.classList.add('message-time');
+    
+        // 메시지와 시간을 함께 추가
+        timeElement.style.float = 'right';
+        messageElement.appendChild(timeElement);
+
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight; // 자동 스크롤
+}
+
+// 현재 시간을 가져오는 함수
+    function getTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
+
+        function sendMessage() {
+            const message = messageInput.value;
+            ws.send(message);
+            messageInput.value = '';
+        }
+    </script>
+</body>
+</html>
